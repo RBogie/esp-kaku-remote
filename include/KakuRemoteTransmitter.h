@@ -5,16 +5,12 @@
  *      Author: Rob Bogie
  */
 
-#ifndef KAKUREMOTETRANSMITTER_HPP
-#define KAKUREMOTETRANSMITTER_HPP
+#ifndef KAKUREMOTETRANSMITTER_H
+#define KAKUREMOTETRANSMITTER_H
 
 #include "driver/rmt.h"
 
 #ifdef __cplusplus
-
-//The clock divider that is used. The source clock is APB CLK (80MHZ)
-#define RMT_CLK_DIVIDER      100
-#define RMT_TICK_10_US    (80000000/RMT_CLK_DIVIDER/100000)   //Number of ticks needed for a 10 microseconds period
 
 class KakuRemoteTransmitter {
 public:
@@ -131,4 +127,4 @@ void kaku_remote_tx_send_dim(kaku_remote_tx handle, uint32_t address, uint8_t un
 }
 #endif
 
-#endif /* KAKUREMOTETRANSMITTER_HPP */
+#endif /* KAKUREMOTETRANSMITTER_H */

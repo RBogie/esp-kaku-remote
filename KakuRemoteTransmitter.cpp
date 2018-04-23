@@ -7,6 +7,10 @@
 
 #include "include/KakuRemoteTransmitter.h"
 
+//The clock divider that is used. The source clock is APB CLK (80MHZ)
+#define RMT_CLK_DIVIDER      100
+#define RMT_TICK_10_US    (80000000/RMT_CLK_DIVIDER/100000)   //Number of ticks needed for a 10 microseconds period
+
 KakuRemoteTransmitter::KakuRemoteTransmitter(rmt_channel_t rmtChannel, gpio_num_t gpioNum, uint16_t periodUs, uint8_t repeats)
 : rmtChannel(rmtChannel), gpioNum(gpioNum), periodUs(periodUs), repeats(repeats) {
 
