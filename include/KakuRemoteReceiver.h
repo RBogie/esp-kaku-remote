@@ -1,5 +1,5 @@
 /*
- * KakuRemoteTransmitter.hpp
+ * KakuRemoteReceiver.h
  *
  *  Created on: Apr 5, 2018
  *      Author: Rob Bogie
@@ -14,8 +14,6 @@
 #include "driver/rmt.h"
 #include <string>
 #include <vector>
-
-#ifdef __cplusplus
 
 typedef struct {
 	struct {
@@ -33,6 +31,8 @@ typedef struct {
 	uint16_t period;
 } KakuRemoteCode;
 
+#ifdef __cplusplus
+
 class KakuRemoteReceiver {
 public:
 
@@ -43,6 +43,9 @@ public:
 	 * @param gpioNum		The io pin on which the 433 transmitter is attached
 	 */
 	KakuRemoteReceiver(gpio_num_t gpioNum);
+
+	void setEnabled(bool enabled);
+
 	virtual ~KakuRemoteReceiver();
 
 private:
@@ -59,6 +62,7 @@ private:
 	uint16_t max5Period;
 	uint8_t receivedBit;
 	bool skipNextEdge = false;
+	volatile bool enabled = true;
 
 
 	gpio_num_t gpioNum;

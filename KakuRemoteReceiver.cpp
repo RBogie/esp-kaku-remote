@@ -34,6 +34,10 @@ KakuRemoteReceiver::~KakuRemoteReceiver() {
 
 }
 
+void KakuRemoteReceiver::setEnabled(bool enabled) {
+	this->enabled = enabled;
+}
+
 void KakuRemoteReceiver::receive() {
 	gpio_pad_select_gpio(this->gpioNum);
 	gpio_set_direction(this->gpioNum, GPIO_MODE_INPUT);
@@ -54,6 +58,9 @@ void KakuRemoteReceiver::receive() {
 }
 
 void KakuRemoteReceiver::onInterrupt() {
+	if(!this->enabled)
+		return;
+
 	// Filter out too short pulses. This method works as a low pass filter.
 	edgeTimeStamp[1] = edgeTimeStamp[2];
 	edgeTimeStamp[2] = esp_timer_get_time();
