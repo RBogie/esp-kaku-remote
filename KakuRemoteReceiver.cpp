@@ -38,6 +38,10 @@ void KakuRemoteReceiver::setEnabled(bool enabled) {
 	this->enabled = enabled;
 }
 
+void KakuRemoteReceiver::addCallback(CallBack callback) {
+	this->callbacks.push_back(callback);
+}
+
 void KakuRemoteReceiver::receive() {
 	gpio_pad_select_gpio(this->gpioNum);
 	gpio_set_direction(this->gpioNum, GPIO_MODE_INPUT);
@@ -50,10 +54,13 @@ void KakuRemoteReceiver::receive() {
 	gpio_isr_handler_add(this->gpioNum, KakuRemoteReceiver::interruptBootstrap, this);
 
 	while(true) {
-		KakuRemoteCode event = {0, };
+		KakuRemoteCode event;
 		xQueueReceive(this->queue, &event, portMAX_DELAY);
 
-		ESP_LOGI(TAG, "Received event: address=%d, unit=%d, isGroup=%d, isDim=%d, isOn=%d, dimLevel=%d, repeat=%d", event.address, event.unit, event.isGroup, event.isDim, event.isOn, event.dimLevel, event.repeat);
+		ESP_LOGV(TAG, "Received event: address=%d, unit=%d, isGroup=%d, isDim=%d, isOn=%d, dimLevel=%d, repeat=%d", event.address, event.unit, event.isGroup, event.isDim, event.isOn, event.dimLevel, event.repeat);
+		for(auto callback : this->callbacks) {
+			callback(event);
+		}
 	}
 }
 
@@ -267,4 +274,15 @@ void KakuRemoteReceiver::receiveBootstrap(void* instance) {
 void KakuRemoteReceiver::interruptBootstrap(void* instance) {
 
 	((KakuRemoteReceiver*)instance)->onInterrupt();
+}
+
+//C Api
+bool kaku_remote_code_is_equal(KakuRemoteCode code1, KakuRemoteCode code2) {
+	return code1.address == code2.address &&
+			code1.dimLevel == code2.dimLevel &&
+			code1.isDim == code2.isDim &&
+			code1.isGroup == code2.isGroup &&
+			code1.isOn == code2.isOn &&
+			code1.unit == code2.unit &&
+			code1.period == code2.period;
 }

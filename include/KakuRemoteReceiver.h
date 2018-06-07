@@ -14,6 +14,7 @@
 #include "driver/rmt.h"
 #include <string>
 #include <vector>
+#include <functional>
 
 typedef struct {
 	struct {
@@ -36,6 +37,8 @@ typedef struct {
 class KakuRemoteReceiver {
 public:
 
+	typedef std::function<void(KakuRemoteCode)> CallBack;
+
 	/**
 	 * Creates a new instance of a receiver for the KAKU (KlikAanKlikUit) protocol on a 433mhz receiver using the specified configuration
 	 *
@@ -45,10 +48,12 @@ public:
 	KakuRemoteReceiver(gpio_num_t gpioNum);
 
 	void setEnabled(bool enabled);
+	void addCallback(CallBack callback);
 
 	virtual ~KakuRemoteReceiver();
 
 private:
+	std::vector<CallBack> callbacks;
 
 	xQueueHandle queue;
 	KakuRemoteCode lastCode = {};
@@ -80,6 +85,8 @@ extern "C" {
 #endif
 
 typedef void* kaku_remote_rx;
+
+bool kaku_remote_code_is_equal(KakuRemoteCode,KakuRemoteCode);
 
 #ifdef __cplusplus
 }

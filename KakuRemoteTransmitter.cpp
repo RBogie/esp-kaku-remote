@@ -7,6 +7,10 @@
 
 #include "include/KakuRemoteTransmitter.h"
 
+#include "esp_log.h"
+
+static const char* TAG = "kakutx";
+
 //The clock divider that is used. The source clock is APB CLK (80MHZ)
 #define RMT_CLK_DIVIDER      100
 #define RMT_TICK_10_US    (80000000/RMT_CLK_DIVIDER/100000)   //Number of ticks needed for a 10 microseconds period
@@ -55,6 +59,7 @@ void KakuRemoteTransmitter::sendGroup(uint32_t address, bool switchOn) {
 	this->sendStop(currentItem);
 
 	for(int i = 0; i < this->repeats; i++) {
+		ESP_LOGV(TAG, "Sending group signal: address=%d, on=%d, repeat=%d", address, switchOn, i);
 		rmt_write_items(this->rmtChannel, items, numItems, true);
 		rmt_wait_tx_done(this->rmtChannel, portMAX_DELAY);
 	}
@@ -77,6 +82,7 @@ void KakuRemoteTransmitter::sendUnit(uint32_t address, uint8_t unit, bool switch
 	this->sendStop(currentItem);
 
 	for(int i = 0; i < this->repeats; i++) {
+		ESP_LOGV(TAG, "Sending unit signal: address=%d, unit=%d, on=%d, repeat=%d", address, unit, switchOn, i);
 		rmt_write_items(this->rmtChannel, items, numItems, true);
 		rmt_wait_tx_done(this->rmtChannel, portMAX_DELAY);
 	}
@@ -105,6 +111,7 @@ void KakuRemoteTransmitter::sendDim(uint32_t address, uint8_t unit, uint8_t dimL
 
 	this->sendStop(currentItem);
 	for(int i = 0; i < this->repeats; i++) {
+		ESP_LOGV(TAG, "Sending unit signal: address=%d, unit=%d, dim=%d, repeat=%d", address, unit, dimLevel, i);
 		rmt_write_items(this->rmtChannel, items, numItems, true);
 		rmt_wait_tx_done(this->rmtChannel, portMAX_DELAY);
 	}
